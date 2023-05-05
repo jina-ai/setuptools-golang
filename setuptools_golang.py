@@ -193,10 +193,10 @@ def set_build_ext(
 
 GOLANG = 'https://storage.googleapis.com/golang/go{}.linux-amd64.tar.gz'
 SCRIPT = '''\
-cd /tmp
-grep -rl 'lpython3.7m' /opt/python/cp37-cp37m/lib/pkgconfig/python-3.7.pc | xargs sed -i 's/-lpython3.7m//g'
-curl {golang} --silent --location | tar -xz
-export PATH="/tmp/go/bin:$PATH" HOME=/tmp
+sed -i "s/-lpython3.7m//g" /opt/python/cp37-cp37m/lib/pkgconfig/python-3.7.pc;
+cd /tmp;
+curl {golang} --silent --location | tar -xz;
+export PATH="/tmp/go/bin:$PATH" HOME=/tmp;
 for py in {pythons}; do
     "/opt/python/$py/bin/pip" wheel --no-deps --wheel-dir /tmp /dist/*.tar.gz
 done
