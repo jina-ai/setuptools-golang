@@ -231,7 +231,6 @@ def build_manylinux_wheels(
         (
             'docker', 'run', '--rm', '-e', f'PKG_CONFIG_PATH=/opt/python/{pythons}/lib/pkgconfig/',
             '--volume', f'{os.path.abspath("dist")}:/dist:rw',
-            '--user', f'{os.getuid()}:{os.getgid()}',
             'quay.io/pypa/manylinux2014_x86_64:latest',
             'bash', '-o', 'pipefail', '-euxc',
             SCRIPT.format(golang=golang, pythons=pythons),
