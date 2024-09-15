@@ -193,9 +193,10 @@ def set_build_ext(
 
 GOLANG = 'https://storage.googleapis.com/golang/go{}.linux-amd64.tar.gz'
 SCRIPT = '''\
-cd /tmp
-curl {golang} --silent --location | tar -xz
-export PATH="/tmp/go/bin:$PATH" HOME=/tmp
+sed -i "s/-lpython3.7m//g" /opt/python/cp37-cp37m/lib/pkgconfig/python-3.7.pc;
+cd /tmp;
+curl {golang} --silent --location | tar -xz;
+export PATH="/tmp/go/bin:$PATH" HOME=/tmp;
 for py in {pythons}; do
     "/opt/python/$py/bin/pip" wheel --no-deps --wheel-dir /tmp /dist/*.tar.gz
 done
@@ -228,10 +229,9 @@ def build_manylinux_wheels(
     _check_call(('python', 'setup.py', 'sdist'), cwd='.', env={})
     _check_call(
         (
-            'docker', 'run', '--rm',
+            'docker', 'run', '--rm', '-e', f'PKG_CONFIG_PATH=/opt/python/{pythons}/lib/pkgconfig/',
             '--volume', f'{os.path.abspath("dist")}:/dist:rw',
-            '--user', f'{os.getuid()}:{os.getgid()}',
-            'quay.io/pypa/manylinux1_x86_64:latest',
+            'quay.io/pypa/manylinux2014_x86_64:latest',
             'bash', '-o', 'pipefail', '-euxc',
             SCRIPT.format(golang=golang, pythons=pythons),
         ),
